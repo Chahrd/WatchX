@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WatchX - Explore Movies</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+      color: #f8fafc;
+      font-family: system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px 15px;
+    }
+    .container {
+      max-width: 650px;
+      margin: 10px auto;
+    }
+    
+    /* Header */
+    .header { text-align: center; margin-bottom: 20px; }
+    h1 {
+      color: #000;
+      font-size: 2.5rem;
+      font-weight: 900;
+      margin: 0 0 6px 0;
+    }
+    h1 span { color: #8b0000; } /* Dark Red X */
+    .tagline { color: #94a3b8; font-size: 0.95rem; margin: 0; }
+
+    /* Ad Container Styling */
+    .ad-container {
+      margin: 15px 0;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px dashed rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      text-align: center;
+      min-height: 90px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #64748b;
+      font-size: 0.8rem;
+    }
+
+    /* Search Box */
+    .search-box {
+      display: flex;
+      gap: 10px;
+      background: rgba(30, 41, 59, 0.8);
+      padding: 8px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 16px;
+    }
+    input {
+      flex: 1; padding: 12px; border-radius: 10px;
+      border: none; background: rgba(15, 23, 42, 0.9);
+      color: #fff; font-size: 1rem; outline: none;
+    }
+    button {
+      padding: 12px 22px; border-radius: 10px; border: none;
+      background: #38bdf8; color: #0b0f19; font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* Chips */
+    .chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; }
+    .chip {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #cbd5e1; padding: 6px 14px; border-radius: 20px;
+      font-size: 0.82rem; cursor: pointer; white-space: nowrap;
+    }
+
+    .hidden { display: none !important; }
+    #loading { text-align: center; color: #38bdf8; margin: 20px 0; }
+    #errorMsg { text-align: center; color: #f43f5e; margin: 20px 0; }
+
+    /* Movie Result Card */
+    .movie-card {
+      background: rgba(30, 41, 59, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 18px; padding: 20px;
+      display: flex; flex-direction: column; gap: 20px;
+    }
+    .poster-container img { width: 100%; max-width: 200px; border-radius: 12px; margin: 0 auto; display: block; }
+    .movie-info h2 { color: #38bdf8; margin: 0 0 10px 0; }
+    .badge { background: rgba(56, 189, 248, 0.15); color: #38bdf8; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; }
+    .rating { background: rgba(251, 191, 36, 0.15); color: #fbbf24; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; }
+
+    @media (min-width: 600px) {
+      .movie-card { flex-direction: row; }
+      .poster-container img { margin: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <h1>WATCH<span>X</span></h1>
+      <p class="tagline">Explore movies, TV shows, and cast details instantly.</p>
+    </div>
+
+    <!-- TOP AD SLOT -->
+    <div class="ad-container" id="top-ad-slot">
+      <!-- PASTE YOUR AD SCRIPT HERE -->
+      <span>[ Top Banner Ad Area ]</span>
+    </div>
+
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Search any movie..." autocomplete="off" />
+      <button type="button" onclick="searchOMDb()">Search</button>
+    </div>
+
+    <div class="chips">
+      <span class="chip" onclick="searchOMDb('Inception')">Inception</span>
+      <span class="chip" onclick="searchOMDb('Avatar')">Avatar</span>
+      <span class="chip" onclick="searchOMDb('Interstellar')">Interstellar</span>
+      <span class="chip" onclick="searchOMDb('Titanic')">Titanic</span>
+    </div>
+
+    <div id="loading" class="hidden">Fetching details...</div>
+    <div id="errorMsg" class="hidden"></div>
+
+    <div id="movieCard" class="movie-card hidden">
+      <div class="poster-container">
+        <img id="moviePoster" src="" alt="Poster" />
+      </div>
+      <div class="movie-info" style="flex: 1;">
+        <h2 id="movieTitle"></h2>
+        <div style="margin-bottom: 10px;">
+          <span id="movieYear" class="badge"></span>
+          <span class="rating">⭐ <span id="movieRating"></span>/10</span>
+        </div>
+        <p id="moviePlot" style="font-size:0.95rem; line-height:1.5; color:#cbd5e1;"></p>
+        <p><strong>Cast:</strong> <span id="movieCast" style="color:#94a3b8;"></span></p>
+      </div>
+    </div>
+
+    <!-- BOTTOM AD SLOT -->
+    <div class="ad-container" id="bottom-ad-slot">
+      <!-- PASTE YOUR AD SCRIPT HERE -->
+      <span>[ Bottom Banner Ad Area ]</span>
+    </div>
+  </div>
+
+  <script>
+    const omdbApiKey = "1af7f08d";
+
+    async function searchOMDb(customQuery = null) {
+      const input = document.getElementById("searchInput");
+      const query = customQuery || input.value.trim();
+      if (customQuery) input.value = customQuery;
+
+      const loading = document.getElementById("loading");
+      const errorMsg = document.getElementById("errorMsg");
+      const movieCard = document.getElementById("movieCard");
+
+      if (!query) return;
+
+      loading.classList.remove("hidden");
+      errorMsg.classList.add("hidden");
+      movieCard.classList.add("hidden");
+
+      try {
+        const res = await fetch(`https://www.omdbapi.com/?t=${encodeURIComponent(query)}&plot=full&apikey=${omdbApiKey}`);
+        const data = await res.json();
+        loading.classList.add("hidden");
+
+        if (data.Response === "False") {
+          errorMsg.textContent = data.Error || "Movie not found!";
+          errorMsg.classList.remove("hidden");
+          return;
+        }
+
+        document.getElementById("moviePoster").src = (data.Poster && data.Poster !== "N/A") ? data.Poster : "https://via.placeholder.com/200x300?text=No+Poster";
+        document.getElementById("movieTitle").textContent = data.Title;
+        document.getElementById("movieYear").textContent = data.Year;
+        document.getElementById("movieRating").textContent = data.imdbRating;
+        document.getElementById("moviePlot").textContent = data.Plot;
+        document.getElementById("movieCast").textContent = data.Actors;
+
+        movieCard.classList.remove("hidden");
+      } catch (err) {
+        loading.classList.add("hidden");
+        errorMsg.textContent = "Error connecting to server.";
+        errorMsg.classList.remove("hidden");
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("searchInput").addEventListener("keypress", (e) => {
+        if (e.key === "Enter") searchOMDb();
+      });
+      searchOMDb("Inception");
+    });
+  </script>
+</body>
+</html>
