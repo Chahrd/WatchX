@@ -42,7 +42,7 @@
   <!-- Search Input -->
   <div class="max-w-4xl mx-auto px-4 mt-6 w-full">
     <div class="relative w-full">
-      <input type="text" id="searchInput" placeholder="Search WatchX for any movie (e.g. Avatar, Inception)..." 
+      <input type="text" id="searchInput" placeholder="Search WatchX for any movie..." 
         class="w-full bg-gray-900/90 text-white text-sm rounded-xl py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-red-500 border border-gray-800 shadow-lg">
       <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-gray-400 text-base"></i>
     </div>
@@ -104,10 +104,7 @@
       </div>
 
       <div id="movieGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-        <div class="col-span-full text-center py-12 text-gray-400">
-          <i class="fa-solid fa-spinner fa-spin text-2xl mb-2 text-red-500"></i>
-          <p class="text-sm">Loading movies...</p>
-        </div>
+        <!-- Movies populated dynamically -->
       </div>
     </section>
 
@@ -151,6 +148,15 @@
     const MONETAG_LINK = "https://uplcm.com/4/12096174";
     const OWNER_PASSWORD = "0102"; 
 
+    // Backup list in case API fails
+    const FALLBACK_MOVIES = [
+      { id: 533535, title: "Deadpool & Wolverine", vote_average: 7.7, release_date: "2024-07-24", poster_path: "/8cdWjvZ2qC223Ob3AceA3P29332.jpg", overview: "A listless Wade Wilson toils away in civilian life until a threat arises..." },
+      { id: 1022789, title: "Inside Out 2", vote_average: 7.6, release_date: "2024-06-11", poster_path: "/vpnVM9B6NMmAnJ35P3994R29P3.jpg", overview: "Teenager Riley's mind headquarters is undergoing a sudden demolition..." },
+      { id: 519182, title: "Despicable Me 4", vote_average: 7.1, release_date: "2024-06-20", poster_path: "/w13A0g22g101c0022R.jpg", overview: "Gru and Lucy and their girls welcome a new member to the family..." },
+      { id: 653346, title: "Kingdom of the Planet of the Apes", vote_average: 7.1, release_date: "2024-05-08", poster_path: "/gKkl3THP313mEg3M9A.jpg", overview: "One generation after Caesar's reign, apes are the dominant species..." },
+      { id: 573435, title: "Bad Boys: Ride or Die", vote_average: 7.5, release_date: "2024-06-05", poster_path: "/m2L3112aP230.jpg", overview: "After their late former Captain is framed, Lowrey and Burnett go on the run..." }
+    ];
+
     let moviesList = [];
     let currentTmdbId = null;
 
@@ -191,30 +197,34 @@
     }
 
     async function fetchTrendingMovies() {
-      const grid = document.getElementById('movieGrid');
       try {
         const res = await fetch(`https://api.themoviedb.org/3/trending/movie/day?api_key=${TMDB_API_KEY}`);
-        if (!res.ok) throw new Error("TMDB network response failed");
+        if (!res.ok) throw new Error("TMDB Response Error");
         
         const data = await res.json();
         if (data.results && data.results.length > 0) {
           moviesList = data.results;
           displayMoviesGrid(moviesList);
         } else {
-          grid.innerHTML = `<div class="col-span-full text-center py-8 text-gray-400">No movies found. Try searching above!</div>`;
+          useFallbackMovies();
         }
       } catch (err) {
-        console.error("Fetch error:", err);
-        grid.innerHTML = `<div class="col-span-full text-center py-8 text-red-400 text-sm">Failed to load movies. Please refresh or check your internet connection.</div>`;
+        console.warn("API load failed, switching to backup movie list:", err);
+        useFallbackMovies();
       }
+    }
+
+    function useFallbackMovies() {
+      moviesList = FALLBACK_MOVIES;
+      displayMoviesGrid(moviesList);
     }
 
     function displayMoviesGrid(movies) {
       const grid = document.getElementById('movieGrid');
       grid.innerHTML = movies.map(m => {
-        const poster = m.poster_path ? `https://image.tmdb.org/t/p/w500${m.poster_path}` : 'https://via.placeholder.com/500x750?text=No+Poster';
-        const rating = m.vote_average ? m.vote_average.toFixed(1) : 'N/A';
-        const year = m.release_date ? m.release_date.split('-')[0] : '';
+        const poster = m.poster_path ? `https://image.tmdb.org/t/p/w500${m.poster_path}` : 'https://via.placeholder.com/500x750?text=WatchX';
+        const rating = m.vote_average ? Number(m.vote_average).toFixed(1) : 'N/A';
+        const year = m.release_date ? m.release_date.split('-')[0] : 'HD';
 
         return `
           <div onclick="selectMovie(${m.id})" class="glass rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition duration-300 border border-gray-800 flex flex-col justify-between">
@@ -224,4 +234,68 @@
                 <span class="text-yellow-400 font-bold"><i class="fa-solid fa-star"></i> ${rating}</span>
                 <span class="text-gray-500">${year}</span>
               </div>
-              <h4 class="text-
+              <h4 class="text-sm font-bold text-white truncate">${m.title}</h4>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function selectMovie(id) {
+      const m = moviesList.find(item => item.id === id);
+      if (!m) return;
+
+      currentTmdbId = id;
+
+      document.getElementById('detailsSection').classList.remove('hidden');
+      document.getElementById('detailTitle').innerText = m.title;
+      document.getElementById('detailOverview').innerText = m.overview || 'No overview available.';
+      document.getElementById('detailRating').querySelector('span').innerText = m.vote_average ? Number(m.vote_average).toFixed(1) : 'N/A';
+      document.getElementById('detailDate').innerText = m.release_date ? `Released: ${m.release_date}` : '';
+      document.getElementById('detailPoster').src = m.poster_path ? `https://image.tmdb.org/t/p/w500${m.poster_path}` : '';
+
+      switchServer(1);
+
+      document.getElementById('streamBtn').href = MONETAG_LINK;
+      document.getElementById('detailsSection').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function switchServer(serverNum) {
+      if (!currentTmdbId) return;
+      const iframe = document.getElementById('videoPlayer');
+      
+      if (serverNum === 1) {
+        iframe.src = `https://vidsrc.xyz/embed/movie/${currentTmdbId}`;
+      } else if (serverNum === 2) {
+        iframe.src = `https://www.2embed.cc/embed/${currentTmdbId}`;
+      } else if (serverNum === 3) {
+        iframe.src = `https://vidsrc.me/embed/movie?tmdb=${currentTmdbId}`;
+      }
+    }
+
+    document.getElementById('searchInput').addEventListener('input', async (e) => {
+      const query = e.target.value.trim();
+
+      if (!query) {
+        displayMoviesGrid(moviesList);
+        document.getElementById('gridTitle').innerHTML = `<i class="fa-solid fa-fire text-red-500"></i> Trending Movies Today`;
+        return;
+      }
+
+      if (query.length > 2) {
+        try {
+          const res = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}`);
+          const data = await res.json();
+          if (data.results && data.results.length > 0) {
+            moviesList = data.results;
+            displayMoviesGrid(data.results);
+            document.getElementById('gridTitle').innerText = `Search Results for "${query}"`;
+          }
+        } catch (err) {
+          console.error("Search error:", err);
+        }
+      }
+    });
+  </script>
+</body>
+</html>
