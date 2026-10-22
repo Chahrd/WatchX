@@ -66,11 +66,9 @@
           </div>
         </div>
 
-        <!-- Clean Iframe without Sandbox restrictions -->
         <div class="aspect-video-container bg-black border border-gray-800 shadow-2xl">
-          <iframe id="videoPlayer" src="" allowfullscreen></iframe>
-        </div><iframe id="videoPlayer" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe>
-
+          <iframe id="videoPlayer" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe>
+        </div>
       </div>
 
       <div class="flex flex-col md:flex-row gap-6 pt-2 border-t border-gray-800">
@@ -82,62 +80,4 @@
               <span id="detailRating" class="bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 text-xs font-bold px-2.5 py-1 rounded-lg">
                 <i class="fa-solid fa-star"></i> <span>0.0</span>
               </span>
-              <span id="detailDate" class="text-xs text-gray-400"></span>
-            </div>
-          </div>
-
-          <p id="detailOverview" class="text-gray-300 text-sm leading-relaxed"></p>
-
-          <div class="pt-2">
-            <a id="streamBtn" href="https://uplcm.com/4/12096174" target="_blank" class="inline-flex items-center gap-2 text-xs font-semibold text-red-400 hover:text-red-300 underline">
-              <i class="fa-solid fa-external-link"></i> External High-Speed Mirror Link
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Movie Display Grid -->
-    <section class="space-y-4">
-      <div class="flex items-center justify-between">
-        <h3 id="gridTitle" class="text-xl font-bold text-white flex items-center gap-2">
-          <i class="fa-solid fa-fire text-red-500"></i> Trending Movies Today
-        </h3>
-      </div>
-
-      <div id="movieGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-        <!-- Movies populated dynamically -->
-      </div>
-    </section>
-
-  </main>
-
-  <!-- Sticky Bottom Ad Slot -->
-  <div class="sticky bottom-0 z-40 w-full bg-gray-950/95 backdrop-blur border-t border-gray-800 p-2 text-center">
-    <div id="footerAdContainer" class="max-w-4xl mx-auto min-h-[50px] ad-slot flex items-center justify-center rounded border border-gray-800 p-1">
-      <span class="text-xs text-gray-500 font-mono tracking-widest">[ FOOTER AD SLOT ]</span>
-    </div>
-  </div>
-
-  <!-- Owner Modal -->
-  <div id="ownerModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="glass max-w-lg w-full rounded-2xl p-6 border border-gray-700 space-y-4">
-      <div class="flex justify-between items-center border-b border-gray-800 pb-3">
-        <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-shield-halved text-red-500"></i> WatchX Owner Panel</h3>
-        <button onclick="closeOwnerModal()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-
-      <div class="space-y-3 text-sm">
-        <div>
-          <label class="block text-gray-300 font-semibold mb-1">Header Ad Script (Monetag Native/Push):</label>
-          <textarea id="headerAdInput" rows="3" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-white text-xs font-mono"></textarea>
-        </div>
-        <div>
-          <label class="block text-gray-300 font-semibold mb-1">Footer Ad Script (Monetag Native/Push):</label>
-          <textarea id="footerAdInput" rows="3" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-white text-xs font-mono"></textarea>
-        </div>
-      </div>
-
-      <div class="flex justify-end gap-2 pt-3 border-t border-gray-800">
-        <button onclick="closeOwnerModal()" class="bg-gray-800 text-white px-4 py-2 rounded-lg text-xs">Cancel</button>
-        <button onclick="saveOwnerSettings()" class="bg-red-600 text-white px-5
+              <span id="detailDate" class="text-xs text-gray-
