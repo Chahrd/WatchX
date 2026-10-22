@@ -1,205 +1,231 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script>(function(s){s.dataset.zone='12092961',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
-  <meta name="monetag" content="ab8032d41f311751505287ef27739ecb">
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WatchX - Explore Movies</title>
+  <!-- Your Original Monetag Verification Meta Tag (Retained) -->
+  <meta name="monetag" content="ab8032d4...">
+  
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WatchX - Trending Movies & Where to Watch</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
-    * { box-sizing: border-box; }
-    body {
-      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-      color: #f8fafc;
-      font-family: system-ui, -apple-system, sans-serif;
-      min-height: 100vh;
-      margin: 0;
-      padding: 20px 15px;
-    }
-    .container {
-      max-width: 650px;
-      margin: 10px auto;
-    }
-    
-    /* Header */
-    .header { text-align: center; margin-bottom: 20px; }
-    h1 {
-      color: #000;
-      font-size: 2.5rem;
-      font-weight: 900;
-      margin: 0 0 6px 0;
-    }
-    h1 span { color: #8b0000; } /* Dark Red X */
-    .tagline { color: #94a3b8; font-size: 0.95rem; margin: 0; }
-
-    /* Ad Container Styling */
-    .ad-container {
-      margin: 15px 0;
-      padding: 10px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px dashed rgba(255, 255, 255, 0.2);
-      border-radius: 12px;
-      text-align: center;
-      min-height: 90px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #64748b;
-      font-size: 0.8rem;
-    }
-
-    /* Search Box */
-    .search-box {
-      display: flex;
-      gap: 10px;
-      background: rgba(30, 41, 59, 0.8);
-      padding: 8px;
-      border-radius: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      margin-bottom: 16px;
-    }
-    input {
-      flex: 1; padding: 12px; border-radius: 10px;
-      border: none; background: rgba(15, 23, 42, 0.9);
-      color: #fff; font-size: 1rem; outline: none;
-    }
-    button {
-      padding: 12px 22px; border-radius: 10px; border: none;
-      background: #38bdf8; color: #0b0f19; font-weight: bold;
-      cursor: pointer;
-    }
-
-    /* Chips */
-    .chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; }
-    .chip {
-      background: rgba(30, 41, 59, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      color: #cbd5e1; padding: 6px 14px; border-radius: 20px;
-      font-size: 0.82rem; cursor: pointer; white-space: nowrap;
-    }
-
-    .hidden { display: none !important; }
-    #loading { text-align: center; color: #38bdf8; margin: 20px 0; }
-    #errorMsg { text-align: center; color: #f43f5e; margin: 20px 0; }
-
-    /* Movie Result Card */
-    .movie-card {
-      background: rgba(30, 41, 59, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 18px; padding: 20px;
-      display: flex; flex-direction: column; gap: 20px;
-    }
-    .poster-container img { width: 100%; max-width: 200px; border-radius: 12px; margin: 0 auto; display: block; }
-    .movie-info h2 { color: #38bdf8; margin: 0 0 10px 0; }
-    .badge { background: rgba(56, 189, 248, 0.15); color: #38bdf8; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; }
-    .rating { background: rgba(251, 191, 36, 0.15); color: #fbbf24; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; }
-
-    @media (min-width: 600px) {
-      .movie-card { flex-direction: row; }
-      .poster-container img { margin: 0; }
-    }
+    body { background-color: #0b0f19; color: #f1f5f9; font-family: system-ui, -apple-system, sans-serif; }
+    .glass { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    .ad-slot { background: repeating-linear-gradient(45deg, #1e293b, #1e293b 10px, #0f172a 10px, #0f172a 20px); }
   </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col justify-between">
 
-  <div class="container">
-    <div class="header">
-      <h1>WATCH<span>X</span></h1>
-      <p class="tagline">Explore movies, TV shows, and cast details instantly.</p>
+  <!-- WatchX Navigation Header -->
+  <header class="sticky top-0 z-50 glass px-4 py-3 flex items-center justify-between border-b border-gray-800">
+    <div class="flex items-center gap-2 cursor-pointer" onclick="fetchTrendingMovies()">
+      <i class="fa-solid fa-play text-red-500 text-2xl"></i>
+      <span class="text-2xl font-black tracking-wider text-white">Watch<span class="text-red-500">X</span></span>
     </div>
-
-    <!-- TOP AD SLOT -->
-    <div class="ad-container" id="top-ad-slot">
-      <!-- PASTE YOUR AD SCRIPT HERE -->
-      <span>[ Top Banner Ad Area ]</span>
+    
+    <div class="flex items-center gap-3">
+      <button onclick="openOwnerModal()" class="bg-gray-800 hover:bg-gray-700 text-gray-200 text-xs font-bold px-3 py-2 rounded-lg border border-gray-700 flex items-center gap-1.5">
+        <i class="fa-solid fa-gear text-red-500"></i> Owner Panel
+      </button>
     </div>
+  </header>
 
-    <div class="search-box">
-      <input type="text" id="searchInput" placeholder="Search any movie..." autocomplete="off" />
-      <button type="button" onclick="searchOMDb()">Search</button>
+  <!-- Top Banner Ad Area -->
+  <div class="w-full bg-gray-950 py-2 border-b border-gray-800 text-center">
+    <div id="headerAdContainer" class="max-w-4xl mx-auto min-h-[50px] ad-slot flex items-center justify-center rounded border border-gray-800 p-1">
+      <span class="text-xs text-gray-500 font-mono tracking-widest">[ TOP BANNER AD AREA ]</span>
     </div>
+  </div>
 
-    <div class="chips">
-      <span class="chip" onclick="searchOMDb('Inception')">Inception</span>
-      <span class="chip" onclick="searchOMDb('Avatar')">Avatar</span>
-      <span class="chip" onclick="searchOMDb('Interstellar')">Interstellar</span>
-      <span class="chip" onclick="searchOMDb('Titanic')">Titanic</span>
+  <!-- Search Bar Section -->
+  <div class="max-w-4xl mx-auto px-4 mt-6 w-full">
+    <div class="relative w-full">
+      <input type="text" id="searchInput" placeholder="Search WatchX for any movie (e.g. Avatar, Inception, Titanic)..." 
+        class="w-full bg-gray-900/90 text-white text-sm rounded-xl py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-red-500 border border-gray-800 shadow-lg">
+      <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-gray-400 text-base"></i>
     </div>
+  </div>
 
-    <div id="loading" class="hidden">Fetching details...</div>
-    <div id="errorMsg" class="hidden"></div>
+  <!-- Main Content Area -->
+  <main class="max-w-6xl mx-auto px-4 py-6 w-full space-y-8 flex-1">
 
-    <div id="movieCard" class="movie-card hidden">
-      <div class="poster-container">
-        <img id="moviePoster" src="" alt="Poster" />
-      </div>
-      <div class="movie-info" style="flex: 1;">
-        <h2 id="movieTitle"></h2>
-        <div style="margin-bottom: 10px;">
-          <span id="movieYear" class="badge"></span>
-          <span class="rating">⭐ <span id="movieRating"></span>/10</span>
+    <!-- Selected Movie Details Display -->
+    <section id="detailsSection" class="hidden glass p-6 rounded-2xl border border-gray-800 space-y-6">
+      <div class="flex flex-col md:flex-row gap-6">
+        <img id="detailPoster" class="w-full md:w-64 rounded-xl object-cover shadow-2xl border border-gray-700" src="" alt="Poster">
+        <div class="space-y-4 flex-1">
+          <div>
+            <h2 id="detailTitle" class="text-2xl md:text-4xl font-bold text-white"></h2>
+            <div class="flex items-center gap-3 mt-2">
+              <span id="detailRating" class="bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 text-xs font-bold px-2.5 py-1 rounded-lg">
+                <i class="fa-solid fa-star"></i> <span>0.0</span>
+              </span>
+              <span id="detailDate" class="text-xs text-gray-400"></span>
+            </div>
+          </div>
+
+          <p id="detailOverview" class="text-gray-300 text-sm md:text-base leading-relaxed"></p>
+
+          <!-- Streaming Button connected to your Monetag Direct Link -->
+          <div class="pt-3 flex flex-wrap gap-3">
+            <a id="streamBtn" href="https://uplcm.com/4/12096174" target="_blank" class="bg-red-600 hover:bg-red-700 text-white text-sm font-bold px-6 py-3 rounded-xl flex items-center gap-2 shadow-lg transition">
+              <i class="fa-solid fa-play"></i> Watch Now / Where to Stream
+            </a>
+          </div>
         </div>
-        <p id="moviePlot" style="font-size:0.95rem; line-height:1.5; color:#cbd5e1;"></p>
-        <p><strong>Cast:</strong> <span id="movieCast" style="color:#94a3b8;"></span></p>
       </div>
-    </div>
+    </section>
 
-    <!-- BOTTOM AD SLOT -->
-    <div class="ad-container" id="bottom-ad-slot">
-      <!-- PASTE YOUR AD SCRIPT HERE -->
-      <span>[ Bottom Banner Ad Area ]</span>
+    <!-- Trending Movies Grid -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 id="gridTitle" class="text-xl font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-fire text-red-500"></i> Trending Movies Today
+        </h3>
+      </div>
+
+      <div id="movieGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        <!-- Movies populated dynamically -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Sticky Bottom Anchor Ad -->
+  <div class="sticky bottom-0 z-40 w-full bg-gray-950/95 backdrop-blur border-t border-gray-800 p-2 text-center">
+    <div id="footerAdContainer" class="max-w-4xl mx-auto min-h-[50px] ad-slot flex items-center justify-center rounded border border-gray-800 p-1">
+      <span class="text-xs text-gray-500 font-mono tracking-widest">[ FOOTER AD SLOT ]</span>
+    </div>
+  </div>
+
+  <!-- Owner Settings Modal -->
+  <div id="ownerModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="glass max-w-lg w-full rounded-2xl p-6 border border-gray-700 space-y-4">
+      <div class="flex justify-between items-center border-b border-gray-800 pb-3">
+        <h3 class="text-lg font-bold text-white">⚙️ WatchX Owner Panel</h3>
+        <button onclick="closeOwnerModal()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="space-y-3 text-sm">
+        <div>
+          <label class="block text-gray-300 font-semibold mb-1">Header Ad Script (Monetag Native/Push):</label>
+          <textarea id="headerAdInput" rows="2" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-white text-xs font-mono"></textarea>
+        </div>
+        <div>
+          <label class="block text-gray-300 font-semibold mb-1">Footer Ad Script (Monetag Native/Push):</label>
+          <textarea id="footerAdInput" rows="2" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-white text-xs font-mono"></textarea>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-3 border-t border-gray-800">
+        <button onclick="closeOwnerModal()" class="bg-gray-800 text-white px-4 py-2 rounded-lg text-xs">Cancel</button>
+        <button onclick="saveOwnerSettings()" class="bg-red-600 text-white px-5 py-2 rounded-lg text-xs font-bold">Save & Apply</button>
+      </div>
     </div>
   </div>
 
   <script>
-    const omdbApiKey = "1af7f08d";
+    const TMDB_API_KEY = "2910b54da641c7f61182b51e5bce4c28";
+    const MONETAG_LINK = "https://uplcm.com/4/12096174";
+    let moviesList = [];
 
-    async function searchOMDb(customQuery = null) {
-      const input = document.getElementById("searchInput");
-      const query = customQuery || input.value.trim();
-      if (customQuery) input.value = customQuery;
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedHeaderAd = localStorage.getItem('header_ad');
+      const savedFooterAd = localStorage.getItem('footer_ad');
 
-      const loading = document.getElementById("loading");
-      const errorMsg = document.getElementById("errorMsg");
-      const movieCard = document.getElementById("movieCard");
+      if (savedHeaderAd) {
+        document.getElementById('headerAdInput').value = savedHeaderAd;
+        document.getElementById('headerAdContainer').innerHTML = savedHeaderAd;
+      }
+      if (savedFooterAd) {
+        document.getElementById('footerAdInput').value = savedFooterAd;
+        document.getElementById('footerAdContainer').innerHTML = savedFooterAd;
+      }
 
-      if (!query) return;
+      fetchTrendingMovies();
+    });
 
-      loading.classList.remove("hidden");
-      errorMsg.classList.add("hidden");
-      movieCard.classList.add("hidden");
+    function openOwnerModal() { document.getElementById('ownerModal').classList.remove('hidden'); }
+    function closeOwnerModal() { document.getElementById('ownerModal').classList.add('hidden'); }
 
+    function saveOwnerSettings() {
+      localStorage.setItem('header_ad', document.getElementById('headerAdInput').value);
+      localStorage.setItem('footer_ad', document.getElementById('footerAdInput').value);
+
+      closeOwnerModal();
+      location.reload();
+    }
+
+    async function fetchTrendingMovies() {
       try {
-        const res = await fetch(`https://www.omdbapi.com/?t=${encodeURIComponent(query)}&plot=full&apikey=${omdbApiKey}`);
+        const res = await fetch(`https://api.themoviedb.org/3/trending/movie/day?api_key=${TMDB_API_KEY}`);
         const data = await res.json();
-        loading.classList.add("hidden");
-
-        if (data.Response === "False") {
-          errorMsg.textContent = data.Error || "Movie not found!";
-          errorMsg.classList.remove("hidden");
-          return;
+        
+        if (data.results && data.results.length > 0) {
+          moviesList = data.results;
+          displayMoviesGrid(moviesList);
         }
-
-        document.getElementById("moviePoster").src = (data.Poster && data.Poster !== "N/A") ? data.Poster : "https://via.placeholder.com/200x300?text=No+Poster";
-        document.getElementById("movieTitle").textContent = data.Title;
-        document.getElementById("movieYear").textContent = data.Year;
-        document.getElementById("movieRating").textContent = data.imdbRating;
-        document.getElementById("moviePlot").textContent = data.Plot;
-        document.getElementById("movieCast").textContent = data.Actors;
-
-        movieCard.classList.remove("hidden");
       } catch (err) {
-        loading.classList.add("hidden");
-        errorMsg.textContent = "Error connecting to server.";
-        errorMsg.classList.remove("hidden");
+        console.error("Error fetching TMDB movies:", err);
       }
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
-      document.getElementById("searchInput").addEventListener("keypress", (e) => {
-        if (e.key === "Enter") searchOMDb();
-      });
-      searchOMDb("Inception");
+    function displayMoviesGrid(movies) {
+      const grid = document.getElementById('movieGrid');
+      grid.innerHTML = movies.map(m => `
+        <div onclick="selectMovie(${m.id})" class="glass rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition duration-300 border border-gray-800">
+          <img src="https://image.tmdb.org/t/p/w500${m.poster_path}" alt="${m.title}" class="w-full h-64 object-cover" onerror="this.src='https://via.placeholder.com/500x750?text=No+Poster'">
+          <div class="p-3 space-y-1">
+            <div class="flex justify-between items-center text-xs">
+              <span class="text-yellow-400 font-bold"><i class="fa-solid fa-star"></i> ${m.vote_average ? m.vote_average.toFixed(1) : 'N/A'}</span>
+              <span class="text-gray-500">${(m.release_date || '').split('-')[0]}</span>
+            </div>
+            <h4 class="text-sm font-bold text-white truncate">${m.title}</h4>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function selectMovie(id) {
+      const m = moviesList.find(item => item.id === id);
+      if (!m) return;
+
+      document.getElementById('detailsSection').classList.remove('hidden');
+      document.getElementById('detailTitle').innerText = m.title;
+      document.getElementById('detailOverview').innerText = m.overview || 'No overview available.';
+      document.getElementById('detailRating').querySelector('span').innerText = m.vote_average ? m.vote_average.toFixed(1) : 'N/A';
+      document.getElementById('detailDate').innerText = m.release_date ? `Released: ${m.release_date}` : '';
+      document.getElementById('detailPoster').src = `https://image.tmdb.org/t/p/w500${m.poster_path}`;
+
+      // Set the button to your active Monetag link
+      document.getElementById('streamBtn').href = MONETAG_LINK;
+
+      document.getElementById('detailsSection').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Live search listener
+    document.getElementById('searchInput').addEventListener('input', async (e) => {
+      const query = e.target.value.trim();
+
+      if (!query) {
+        displayMoviesGrid(moviesList);
+        document.getElementById('gridTitle').innerHTML = `<i class="fa-solid fa-fire text-red-500"></i> Trending Movies Today`;
+        return;
+      }
+
+      if (query.length > 2) {
+        try {
+          const res = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}`);
+          const data = await res.json();
+          if (data.results) {
+            displayMoviesGrid(data.results);
+            document.getElementById('gridTitle').innerText = `Search Results for "${query}"`;
+          }
+        } catch (err) {
+          console.error("Search error:", err);
+        }
+      }
     });
   </script>
 </body>
