@@ -20,7 +20,7 @@
 
   <!-- Header Navigation -->
   <header class="sticky top-0 z-50 glass px-4 py-3 flex items-center justify-between border-b border-gray-800">
-    <div class="flex items-center gap-2 cursor-pointer" onclick="fetchTrendingMovies()">
+    <div class="flex items-center gap-2 cursor-pointer" onclick="showDefaultGrid()">
       <i class="fa-solid fa-play text-red-500 text-2xl"></i>
       <span class="text-2xl font-black tracking-wider text-white">Watch<span class="text-red-500">X</span></span>
     </div>
@@ -80,4 +80,206 @@
               <span id="detailRating" class="bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 text-xs font-bold px-2.5 py-1 rounded-lg">
                 <i class="fa-solid fa-star"></i> <span>0.0</span>
               </span>
-              <span id="detailDate" class="text-xs text-gray-
+              <span id="detailDate" class="text-xs text-gray-400"></span>
+            </div>
+          </div>
+
+          <p id="detailOverview" class="text-gray-300 text-sm leading-relaxed"></p>
+
+          <div class="pt-2">
+            <a id="streamBtn" href="https://uplcm.com/4/12096174" target="_blank" class="inline-flex items-center gap-2 text-xs font-semibold text-red-400 hover:text-red-300 underline">
+              <i class="fa-solid fa-external-link"></i> External High-Speed Mirror Link
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Movie Display Grid -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 id="gridTitle" class="text-xl font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-fire text-red-500"></i> Trending Movies Today
+        </h3>
+      </div>
+
+      <div id="movieGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        <!-- Built-in movie list loaded instantly -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Sticky Bottom Ad Slot -->
+  <div class="sticky bottom-0 z-40 w-full bg-gray-950/95 backdrop-blur border-t border-gray-800 p-2 text-center">
+    <div id="footerAdContainer" class="max-w-4xl mx-auto min-h-[50px] ad-slot flex items-center justify-center rounded border border-gray-800 p-1">
+      <span class="text-xs text-gray-500 font-mono tracking-widest">[ FOOTER AD SLOT ]</span>
+    </div>
+  </div>
+
+  <!-- Owner Modal -->
+  <div id="ownerModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="glass max-w-lg w-full rounded-2xl p-6 border border-gray-700 space-y-4">
+      <div class="flex justify-between items-center border-b border-gray-800 pb-3">
+        <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-shield-halved text-red-500"></i> WatchX Owner Panel</h3>
+        <button onclick="closeOwnerModal()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="space-y-3 text-sm">
+        <div>
+          <label class="block text-gray-300 font-semibold mb-1">Header Ad Script (Monetag Native/Push):</label>
+          <textarea id="headerAdInput" rows="3" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-white text-xs font-mono"></textarea>
+        </div>
+        <div>
+          <label class="block text-gray-300 font-semibold mb-1">Footer Ad Script (Monetag Native/Push):</label>
+          <textarea id="footerAdInput" rows="3" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-white text-xs font-mono"></textarea>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-3 border-t border-gray-800">
+        <button onclick="closeOwnerModal()" class="bg-gray-800 text-white px-4 py-2 rounded-lg text-xs">Cancel</button>
+        <button onclick="saveOwnerSettings()" class="bg-red-600 text-white px-5 py-2 rounded-lg text-xs font-bold">Save & Apply</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const TMDB_API_KEY = "2910b54da641c7f61182b51e5bce4c28";
+    const MONETAG_LINK = "https://uplcm.com/4/12096174";
+    const OWNER_PASSWORD = "0102"; 
+
+    // Instant offline movie collection
+    const DEFAULT_MOVIES = [
+      { id: 533535, title: "Deadpool & Wolverine", vote_average: 7.7, release_date: "2024-07-24", poster_path: "/8cdWjvZ2qC223Ob3AceA3P29332.jpg", overview: "A listless Wade Wilson toils away in civilian life until a threat arises..." },
+      { id: 1022789, title: "Inside Out 2", vote_average: 7.6, release_date: "2024-06-11", poster_path: "/vpnVM9B6NMmAnJ35P3994R29P3.jpg", overview: "Teenager Riley's mind headquarters is undergoing a sudden demolition..." },
+      { id: 519182, title: "Despicable Me 4", vote_average: 7.1, release_date: "2024-06-20", poster_path: "/w13A0g22g101c0022R.jpg", overview: "Gru and Lucy and their girls welcome a new member to the family..." },
+      { id: 653346, title: "Kingdom of the Planet of the Apes", vote_average: 7.1, release_date: "2024-05-08", poster_path: "/gKkl3THP313mEg3M9A.jpg", overview: "One generation after Caesar's reign, apes are the dominant species..." },
+      { id: 573435, title: "Bad Boys: Ride or Die", vote_average: 7.5, release_date: "2024-06-05", poster_path: "/m2L3112aP230.jpg", overview: "After their late former Captain is framed, Lowrey and Burnett go on the run..." },
+      { id: 343611, title: "Hitman's Wife's Bodyguard", vote_average: 6.6, release_date: "2021-06-14", poster_path: "/3A8132o4382.jpg", overview: "The world's most lethal odd couple are back on another life-threatening mission..." }
+    ];
+
+    let moviesList = DEFAULT_MOVIES;
+    let currentTmdbId = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const savedHeaderAd = localStorage.getItem('header_ad');
+      const savedFooterAd = localStorage.getItem('footer_ad');
+
+      if (savedHeaderAd) {
+        document.getElementById('headerAdInput').value = savedHeaderAd;
+        document.getElementById('headerAdContainer').innerHTML = savedHeaderAd;
+      }
+      if (savedFooterAd) {
+        document.getElementById('footerAdInput').value = savedFooterAd;
+        document.getElementById('footerAdContainer').innerHTML = savedFooterAd;
+      }
+
+      // Load movies instantly without waiting for an external API request
+      showDefaultGrid();
+    });
+
+    function requestOwnerAccess() {
+      const pwd = prompt("Enter Owner Passkey:");
+      if (pwd === OWNER_PASSWORD) {
+        document.getElementById('ownerModal').classList.remove('hidden');
+      } else if (pwd !== null) {
+        alert("Access Denied: Incorrect Passkey!");
+      }
+    }
+
+    function closeOwnerModal() { 
+      document.getElementById('ownerModal').classList.add('hidden'); 
+    }
+
+    function saveOwnerSettings() {
+      localStorage.setItem('header_ad', document.getElementById('headerAdInput').value);
+      localStorage.setItem('footer_ad', document.getElementById('footerAdInput').value);
+      closeOwnerModal();
+      location.reload();
+    }
+
+    function showDefaultGrid() {
+      moviesList = DEFAULT_MOVIES;
+      displayMoviesGrid(moviesList);
+      document.getElementById('gridTitle').innerHTML = `<i class="fa-solid fa-fire text-red-500"></i> Trending Movies Today`;
+    }
+
+    function displayMoviesGrid(movies) {
+      const grid = document.getElementById('movieGrid');
+      grid.innerHTML = movies.map(m => {
+        const poster = m.poster_path ? `https://image.tmdb.org/t/p/w500${m.poster_path}` : 'https://via.placeholder.com/500x750?text=WatchX';
+        const rating = m.vote_average ? Number(m.vote_average).toFixed(1) : 'N/A';
+        const year = m.release_date ? m.release_date.split('-')[0] : 'HD';
+
+        return `
+          <div onclick="selectMovie(${m.id})" class="glass rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition duration-300 border border-gray-800 flex flex-col justify-between">
+            <img src="${poster}" alt="${m.title}" class="w-full h-60 sm:h-64 object-cover" loading="lazy">
+            <div class="p-3 space-y-1">
+              <div class="flex justify-between items-center text-xs">
+                <span class="text-yellow-400 font-bold"><i class="fa-solid fa-star"></i> ${rating}</span>
+                <span class="text-gray-500">${year}</span>
+              </div>
+              <h4 class="text-sm font-bold text-white truncate">${m.title}</h4>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function selectMovie(id) {
+      const m = moviesList.find(item => item.id === id);
+      if (!m) return;
+
+      currentTmdbId = id;
+
+      document.getElementById('detailsSection').classList.remove('hidden');
+      document.getElementById('detailTitle').innerText = m.title;
+      document.getElementById('detailOverview').innerText = m.overview || 'No overview available.';
+      document.getElementById('detailRating').querySelector('span').innerText = m.vote_average ? Number(m.vote_average).toFixed(1) : 'N/A';
+      document.getElementById('detailDate').innerText = m.release_date ? `Released: ${m.release_date}` : '';
+      document.getElementById('detailPoster').src = m.poster_path ? `https://image.tmdb.org/t/p/w500${m.poster_path}` : '';
+
+      switchServer(1);
+
+      document.getElementById('streamBtn').href = MONETAG_LINK;
+      document.getElementById('detailsSection').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function switchServer(serverNum) {
+      if (!currentTmdbId) return;
+      const iframe = document.getElementById('videoPlayer');
+      
+      if (serverNum === 1) {
+        iframe.src = `https://vidsrc.xyz/embed/movie/${currentTmdbId}`;
+      } else if (serverNum === 2) {
+        iframe.src = `https://www.2embed.cc/embed/${currentTmdbId}`;
+      } else if (serverNum === 3) {
+        iframe.src = `https://vidsrc.me/embed/movie?tmdb=${currentTmdbId}`;
+      }
+    }
+
+    document.getElementById('searchInput').addEventListener('input', async (e) => {
+      const query = e.target.value.trim();
+
+      if (!query) {
+        showDefaultGrid();
+        return;
+      }
+
+      if (query.length > 2) {
+        try {
+          const res = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}`);
+          const data = await res.json();
+          if (data.results && data.results.length > 0) {
+            moviesList = data.results;
+            displayMoviesGrid(data.results);
+            document.getElementById('gridTitle').innerText = `Search Results for "${query}"`;
+          }
+        } catch (err) {
+          console.error("Search error:", err);
+        }
+      }
+    });
+  </script>
+</body>
+</html>
